@@ -28,7 +28,7 @@ const Col = styled.div`
 const Logo = styled(motion.svg)`
     z-index: 999999;
     margin-right: 70px;
-    margin-left: 40px;
+    margin-left: 60px;
     width: 95px;
     height: 25px;
     color: ${(props) => props.theme.white.darker};
