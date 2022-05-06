@@ -1,11 +1,13 @@
 import { AnimatePresence, motion, useViewportScroll } from "framer-motion";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import styled from "styled-components";
-import { getMovies, IMoviesResult } from "../api";
+import { getMovies, getPopularMovies, IMoviesResult } from "../api";
 import { makeImagePath } from "../utils";
 import { useMatch, useNavigate } from "react-router-dom";
 import Slider from "../Components/Slider";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { listData } from "../atoms";
 
 const Wrapper = styled.div`
     background-color: black;
@@ -158,56 +160,89 @@ const BigOverview = styled.p`
     top: -75px;
     color: ${(props) => props.theme.white.lighter};
 `;
+const MovieListContainer = styled.div`
+    position: relative;
+    display: grid;
+    grid-template-rows: 350px 350px;
+`;
+const NowPlayingContainer = styled.div`
+    display: block;
+    /* display: flex;
+    flex-direction: column; */
+`;
+const PopularPlayingContainer = styled.div`
+    display: block;
+    /* display: flex;
+    flex-direction: column; */
+`;
+const SlideTitle = styled.div`
+    font-size: 32px;
+    position: relative;
+    bottom: 115px;
+    padding-left: 45px;
+    padding-right: 50px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background: linear-gradient(to right, black 70%, transparent);
+    width: fit-content;
+    color: ${(props) => props.theme.white.lighter};
+`;
 
 function Home() {
     const navigate = useNavigate();
-    const bigMovieMatch = useMatch("/movies/:movieId");
+    const bigMovieMatch = useMatch("/movies/:type/:movieId");
+
     const { scrollY } = useViewportScroll();
-    const { data, isLoading } = useQuery<IMoviesResult>(
-        ["movies", "nowPlaying"],
-        getMovies
-    );
-    // const [index, setIndex] = useState(0);
-    // const [leaving, setLeaving] = useState(false);
-    // const increaseIndex = () => {
-    //     if (data) {
-    //         if (leaving) return;
-    //         toggleLeaving();
-    //         const totalMovies = data?.results.length - 1;
-    //         const maxIndex = Math.floor(totalMovies / offset) - 1;
-    //         setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
-    //     }
-    // };
-    // const toggleLeaving = () => setLeaving((prev) => !prev);
-    // const onBoxClicked = (movieId: number) => {
-    //     navigate(`/movies/${movieId}`);
-    // };
+    const { data: nowPlaying, isLoading: isNowPlayingLoading } = useQuery<
+        IMoviesResult
+    >(["movies", "nowPlaying"], getMovies);
+    const { data: popular, isLoading: isPopularLoading } = useQuery<
+        IMoviesResult
+    >(["movies", "popular"], getPopularMovies);
     const onOverlayClick = () => {
         navigate("/");
     };
     const clickedMovie =
         bigMovieMatch?.params.movieId &&
-        data?.results.find(
+        nowPlaying?.results.find(
             (movie) => String(movie.id) === bigMovieMatch.params.movieId
         );
-
-    console.log(clickedMovie);
+    const checkLayoutId = () => {
+        const id = bigMovieMatch?.params.movieId;
+        const type = bigMovieMatch?.params.type;
+        const layoutId = String(id) + String(type);
+        return layoutId;
+    };
     return (
         <Wrapper>
-            {isLoading ? (
+            {isNowPlayingLoading ? (
                 <Loader>Loading...</Loader>
             ) : (
                 <>
                     <Banner
                         // onClick={increaseIndex}
                         bgPhoto={makeImagePath(
-                            data?.results[0].backdrop_path || ""
+                            nowPlaying?.results[0].backdrop_path || ""
                         )}
                     >
-                        <Title>{data?.results[0].title}</Title>
-                        <Overview>{data?.results[0].overview}</Overview>
+                        <Title>{nowPlaying?.results[0].title}</Title>
+                        <Overview>{nowPlaying?.results[0].overview}</Overview>
                     </Banner>
-                    <Slider listData={data} />
+                    {/* <Slider /> */}
+                    <MovieListContainer>
+                        <NowPlayingContainer>
+                            <SlideTitle>Now Playing</SlideTitle>
+                            <Slider
+                                listData={{ ...nowPlaying, type: "nowPlaying" }}
+                            />
+                        </NowPlayingContainer>
+                        <PopularPlayingContainer>
+                            <SlideTitle>Popular</SlideTitle>
+                            <Slider
+                                listData={{ ...popular, type: "popular" }}
+                            />
+                        </PopularPlayingContainer>
+                    </MovieListContainer>
                     {/* <Slider>
                         <AnimatePresence
                             initial={false}
@@ -260,7 +295,7 @@ function Home() {
                                     exit={{ opacity: 0 }}
                                 ></Overlay>
                                 <BigMovie
-                                    layoutId={bigMovieMatch.params.movieId}
+                                    layoutId={checkLayoutId()}
                                     style={{ top: scrollY.get() + 100 }}
                                 >
                                     {clickedMovie && (

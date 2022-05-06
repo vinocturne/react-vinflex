@@ -4,6 +4,8 @@ import { AnimatePresence, motion, useViewportScroll } from "framer-motion";
 import { makeImagePath } from "../utils";
 import { IMoviesResult } from "../api";
 import { useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
+import { listData } from "../atoms";
 
 const SliderList = styled.div`
     position: relative;
@@ -19,9 +21,9 @@ const Row = styled(motion.div)`
     position: absolute;
 `;
 
-const Box = styled(motion.div)<{ bgPhoto: string }>`
+const Box = styled(motion.div)<{ bgphoto: string }>`
     /* background-color: white; */
-    background-image: url(${(props) => props.bgPhoto});
+    background-image: url(${(props) => props.bgphoto});
     background-size: cover;
     background-position: center;
     height: 200px;
@@ -84,14 +86,18 @@ const Info = styled(motion.div)`
 
 const offset = 6;
 
-function Slider(listData: any) {
+function Slider({ listData }: any) {
+    // function Slider(listData: IMoviesResult) {
     const [index, setIndex] = useState(0);
     const [leaving, setLeaving] = useState(false);
     const toggleLeaving = () => setLeaving((prev) => !prev);
     const navigate = useNavigate();
     const onBoxClicked = (movieId: number) => {
-        navigate(`/movies/${movieId}`);
+        console.log(movieId + listData.type);
+        navigate(`/movies/${listData.type}/${movieId}`);
     };
+    // console.log(listData);
+    // const movieData = useRecoilValue(listData);
     return (
         <SliderList>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
@@ -108,13 +114,13 @@ function Slider(listData: any) {
                         .slice(offset * index, offset * index + offset)
                         .map((movie: any) => (
                             <Box
-                                layoutId={movie.id + ""}
+                                layoutId={movie.id + listData.type}
                                 variants={boxVariants}
                                 key={movie.id}
                                 initial="normal"
                                 whileHover="hover"
                                 transition={{ type: "tween" }}
-                                bgPhoto={makeImagePath(
+                                bgphoto={makeImagePath(
                                     movie.backdrop_path,
                                     "w500"
                                 )}
