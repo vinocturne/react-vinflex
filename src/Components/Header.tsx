@@ -10,6 +10,7 @@ import { Link, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const Nav = styled(motion.nav)`
+    z-index: 999999;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -149,7 +150,7 @@ function Header() {
     const navAnimation = useAnimation();
     useEffect(() => {
         scrollY.onChange(() => {
-            if (scrollY.get() > 80) {
+            if (scrollY.get() > 40) {
                 navAnimation.start("scroll");
             } else {
                 navAnimation.start("top");

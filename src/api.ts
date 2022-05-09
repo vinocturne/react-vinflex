@@ -101,6 +101,11 @@ export function searchMovies(keyword: string) {
         `${BASE_PATH}/search/movie?api_key=${API_KEY}&language=en-US&query=${keyword}&page=1&include_adult=false`
     ).then((response) => response.json());
 }
+export function searchTvs(keyword: string) {
+    return fetch(
+        `${BASE_PATH}/search/tv?api_key=${API_KEY}&language=en-US&query=${keyword}&page=1&include_adult=false`
+    ).then((response) => response.json());
+}
 
 export function getPopularMovies() {
     return fetch(
