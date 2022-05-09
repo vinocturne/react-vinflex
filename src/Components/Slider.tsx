@@ -90,15 +90,15 @@ function Slider(props: any) {
     const toggleLeaving = () => setLeaving((prev) => !prev);
     const navigate = useNavigate();
     const location = useLocation();
-    const onBoxClicked = (id: number) => {
-        props.clicked();
+    const onBoxClicked = async (id: number) => {
         switch (location.pathname) {
             case "/":
-                navigate(`/movies/${props.listData.type}/${id}`);
+                await navigate(`/movies/${props.listData.type}/${id}`);
                 break;
             case "/tv":
-                navigate(`/tv/${props.listData.type}/${id}`);
+                await navigate(`/tv/${props.listData.type}/${id}`);
         }
+        props.clicked();
     };
     return (
         <SliderList>

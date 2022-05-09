@@ -132,10 +132,11 @@ function Tv() {
         refetch: detailRefetch,
     } = useQuery<ITvDetail>(
         ["detail", bigTvMatch?.params.id && bigTvMatch?.params.id],
-        getTvDetail
+        getTvDetail,
+        { enabled: false }
     );
-    const clickedTv = async () => {
-        await detailRefetch();
+    const clickedTv = () => {
+        detailRefetch();
     };
 
     const checkLayoutId = () => {
@@ -159,13 +160,18 @@ function Tv() {
                         <Overview>{nowPlaying?.results[0].overview}</Overview>
                     </Banner>
                     <TvListContainer>
-                        <NowPlayingContainer>
-                            <SlideTitle>Now Playing</SlideTitle>
-                            <Slider
-                                listData={{ ...nowPlaying, type: "nowPlaying" }}
-                                clicked={clickedTv}
-                            />
-                        </NowPlayingContainer>
+                        {!isNowPlayingLoading ? (
+                            <NowPlayingContainer>
+                                <SlideTitle>Now Playing</SlideTitle>
+                                <Slider
+                                    listData={{
+                                        ...nowPlaying,
+                                        type: "nowPlaying",
+                                    }}
+                                    clicked={clickedTv}
+                                />
+                            </NowPlayingContainer>
+                        ) : null}
                         {!isPopularLoading ? (
                             <PopularPlayingContainer>
                                 <SlideTitle>Popular</SlideTitle>
@@ -176,38 +182,42 @@ function Tv() {
                             </PopularPlayingContainer>
                         ) : null}
                     </TvListContainer>
-                    <AnimatePresence>
-                        {bigTvMatch ? (
-                            <>
-                                <Overlay
-                                    onClick={onOverlayClick}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                ></Overlay>
-                                <BigTv
-                                    layoutId={checkLayoutId()}
-                                    style={{ top: scrollY.get() + 100 }}
-                                >
-                                    {tvDetail && (
-                                        <>
-                                            <BigCover
-                                                style={{
-                                                    backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
-                                                        tvDetail.backdrop_path,
-                                                        "w500"
-                                                    )})`,
-                                                }}
-                                            />
-                                            <BigTitle>{tvDetail.name}</BigTitle>
-                                            <BigOverview>
-                                                {tvDetail.overview}
-                                            </BigOverview>
-                                        </>
-                                    )}
-                                </BigTv>
-                            </>
-                        ) : null}
-                    </AnimatePresence>
+                    {!isDetailLoading ? (
+                        <AnimatePresence>
+                            {bigTvMatch ? (
+                                <>
+                                    <Overlay
+                                        onClick={onOverlayClick}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                    ></Overlay>
+                                    <BigTv
+                                        layoutId={checkLayoutId()}
+                                        style={{ top: scrollY.get() + 100 }}
+                                    >
+                                        {tvDetail && (
+                                            <>
+                                                <BigCover
+                                                    style={{
+                                                        backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
+                                                            tvDetail.backdrop_path,
+                                                            "w500"
+                                                        )})`,
+                                                    }}
+                                                />
+                                                <BigTitle>
+                                                    {tvDetail.name}
+                                                </BigTitle>
+                                                <BigOverview>
+                                                    {tvDetail.overview}
+                                                </BigOverview>
+                                            </>
+                                        )}
+                                    </BigTv>
+                                </>
+                            ) : null}
+                        </AnimatePresence>
+                    ) : null}
                 </>
             )}
         </Wrapper>

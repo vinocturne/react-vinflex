@@ -125,18 +125,18 @@ function Home() {
     const onOverlayClick = () => {
         navigate("/");
     };
-
     const {
         data: movieDetail,
         isLoading: isDetailLoading,
         refetch: detailRefetch,
     } = useQuery<IMovieDetail>(
         ["detail", bigMovieMatch?.params.id && bigMovieMatch?.params.id],
-        getMovieDetail
+        getMovieDetail,
+        { enabled: false }
     );
 
-    const clickedMovie = async () => {
-        await detailRefetch();
+    const clickedMovie = () => {
+        detailRefetch();
     };
 
     const checkLayoutId = () => {
@@ -160,55 +160,64 @@ function Home() {
                         <Overview>{nowPlaying?.results[0].overview}</Overview>
                     </Banner>
                     <MovieListContainer>
-                        <NowPlayingContainer>
-                            <SlideTitle>Now Playing</SlideTitle>
-                            <Slider
-                                listData={{ ...nowPlaying, type: "nowPlaying" }}
-                                clicked={clickedMovie}
-                            />
-                        </NowPlayingContainer>
-                        <PopularPlayingContainer>
-                            <SlideTitle>Popular</SlideTitle>
-                            <Slider
-                                listData={{ ...popular, type: "popular" }}
-                                clicked={clickedMovie}
-                            />
-                        </PopularPlayingContainer>
-                    </MovieListContainer>
-                    <AnimatePresence>
-                        {bigMovieMatch ? (
-                            <>
-                                <Overlay
-                                    onClick={onOverlayClick}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                ></Overlay>
-                                <BigMovie
-                                    layoutId={checkLayoutId()}
-                                    style={{ top: scrollY.get() + 100 }}
-                                >
-                                    {movieDetail && (
-                                        <>
-                                            <BigCover
-                                                style={{
-                                                    backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
-                                                        movieDetail.backdrop_path,
-                                                        "w500"
-                                                    )})`,
-                                                }}
-                                            />
-                                            <BigTitle>
-                                                {movieDetail.title}
-                                            </BigTitle>
-                                            <BigOverview>
-                                                {movieDetail.overview}
-                                            </BigOverview>
-                                        </>
-                                    )}
-                                </BigMovie>
-                            </>
+                        {!isNowPlayingLoading ? (
+                            <NowPlayingContainer>
+                                <SlideTitle>Now Playing</SlideTitle>
+                                <Slider
+                                    listData={{
+                                        ...nowPlaying,
+                                        type: "nowPlaying",
+                                    }}
+                                    clicked={clickedMovie}
+                                />
+                            </NowPlayingContainer>
                         ) : null}
-                    </AnimatePresence>
+                        {!isPopularLoading ? (
+                            <PopularPlayingContainer>
+                                <SlideTitle>Popular</SlideTitle>
+                                <Slider
+                                    listData={{ ...popular, type: "popular" }}
+                                    clicked={clickedMovie}
+                                />
+                            </PopularPlayingContainer>
+                        ) : null}
+                    </MovieListContainer>
+                    {!isDetailLoading ? (
+                        <AnimatePresence>
+                            {bigMovieMatch ? (
+                                <>
+                                    <Overlay
+                                        onClick={onOverlayClick}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                    ></Overlay>
+                                    <BigMovie
+                                        layoutId={checkLayoutId()}
+                                        style={{ top: scrollY.get() + 100 }}
+                                    >
+                                        {movieDetail && (
+                                            <>
+                                                <BigCover
+                                                    style={{
+                                                        backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
+                                                            movieDetail.backdrop_path,
+                                                            "w500"
+                                                        )})`,
+                                                    }}
+                                                />
+                                                <BigTitle>
+                                                    {movieDetail.title}
+                                                </BigTitle>
+                                                <BigOverview>
+                                                    {movieDetail.overview}
+                                                </BigOverview>
+                                            </>
+                                        )}
+                                    </BigMovie>
+                                </>
+                            ) : null}
+                        </AnimatePresence>
+                    ) : null}
                 </>
             )}
         </Wrapper>
