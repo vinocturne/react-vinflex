@@ -8,6 +8,13 @@ interface IMovie {
     title: string;
     overview: string;
 }
+interface ITv {
+    id: number;
+    backdrop_path: string;
+    poster_path: string;
+    name: string;
+    overview: string;
+}
 
 interface IGenres {
     id: number;
@@ -24,6 +31,12 @@ export interface IMoviesResult {
     total_pages: number;
     total_results: number;
 }
+export interface ITvResult {
+    page: number;
+    results: ITv[];
+    total_pages: number;
+    total_results: number;
+}
 
 export interface ISearchResult {
     page: number;
@@ -31,9 +44,15 @@ export interface ISearchResult {
     total_pages: number;
     total_results: number;
 }
-export interface IPopularResult {
+export interface IPopularMovieResult {
     page: number;
     results: IMovie[];
+    total_pages: number;
+    total_results: number;
+}
+export interface IPopularTvResult {
+    page: number;
+    results: ITv[];
     total_pages: number;
     total_results: number;
 }
@@ -50,10 +69,30 @@ export interface IMovieDetail {
     runtime: number;
     vote_average: number;
 }
+export interface ITvDetail {
+    adult: boolean;
+    backdrop_path: string;
+    genres: IGenres[];
+    id: number;
+    name: string;
+    overview: string;
+    episode_run_time: number[];
+    vote_average: number;
+}
 
 export function getMovies() {
     return fetch(
         `${BASE_PATH}/movie/now_playing?api_key=${API_KEY}`
+    ).then((response) => response.json());
+}
+export function getTvs() {
+    return fetch(
+        `${BASE_PATH}/tv/on_the_air?api_key=${API_KEY}`
+    ).then((response) => response.json());
+}
+export function getPopularTvs() {
+    return fetch(
+        `${BASE_PATH}/tv/popular?api_key=${API_KEY}`
     ).then((response) => response.json());
 }
 
@@ -73,5 +112,11 @@ export function getMovieDetail({ queryKey }: any) {
     const [_, movieId] = queryKey;
     return fetch(
         `${BASE_PATH}/movie/${movieId}?api_key=${API_KEY}`
+    ).then((response) => response.json());
+}
+export function getTvDetail({ queryKey }: any) {
+    const [_, tvId] = queryKey;
+    return fetch(
+        `${BASE_PATH}/tv/${tvId}?api_key=${API_KEY}`
     ).then((response) => response.json());
 }

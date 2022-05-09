@@ -9,7 +9,7 @@ import {
     IMoviesResult,
 } from "../api";
 import { makeImagePath } from "../utils";
-import { useMatch, useNavigate } from "react-router-dom";
+import { useLocation, useMatch, useNavigate } from "react-router-dom";
 import Slider from "../Components/Slider";
 
 const Wrapper = styled.div`
@@ -112,7 +112,8 @@ const SlideTitle = styled.div`
 
 function Home() {
     const navigate = useNavigate();
-    const bigMovieMatch = useMatch("/movies/:type/:movieId");
+    const location = useLocation();
+    const bigMovieMatch = useMatch("/movies/:type/:id");
 
     const { scrollY } = useViewportScroll();
     const { data: nowPlaying, isLoading: isNowPlayingLoading } = useQuery<
@@ -130,10 +131,7 @@ function Home() {
         isLoading: isDetailLoading,
         refetch: detailRefetch,
     } = useQuery<IMovieDetail>(
-        [
-            "movies",
-            bigMovieMatch?.params.movieId && bigMovieMatch?.params.movieId,
-        ],
+        ["detail", bigMovieMatch?.params.id && bigMovieMatch?.params.id],
         getMovieDetail
     );
 
@@ -142,7 +140,7 @@ function Home() {
     };
 
     const checkLayoutId = () => {
-        const id = bigMovieMatch?.params.movieId;
+        const id = bigMovieMatch?.params.id;
         const type = bigMovieMatch?.params.type;
         const layoutId = String(id) + String(type);
         return layoutId;
@@ -166,14 +164,14 @@ function Home() {
                             <SlideTitle>Now Playing</SlideTitle>
                             <Slider
                                 listData={{ ...nowPlaying, type: "nowPlaying" }}
-                                clickedMovie={clickedMovie}
+                                clicked={clickedMovie}
                             />
                         </NowPlayingContainer>
                         <PopularPlayingContainer>
                             <SlideTitle>Popular</SlideTitle>
                             <Slider
                                 listData={{ ...popular, type: "popular" }}
-                                clickedMovie={clickedMovie}
+                                clicked={clickedMovie}
                             />
                         </PopularPlayingContainer>
                     </MovieListContainer>

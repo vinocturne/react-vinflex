@@ -2,7 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { AnimatePresence, motion } from "framer-motion";
 import { makeImagePath } from "../utils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { listData } from "../atoms";
 
 const SliderList = styled.div`
@@ -89,9 +89,16 @@ function Slider(props: any) {
     const [leaving, setLeaving] = useState(false);
     const toggleLeaving = () => setLeaving((prev) => !prev);
     const navigate = useNavigate();
-    const onBoxClicked = (movieId: number) => {
-        props.clickedMovie();
-        navigate(`/movies/${props.listData.type}/${movieId}`);
+    const location = useLocation();
+    const onBoxClicked = (id: number) => {
+        props.clicked();
+        switch (location.pathname) {
+            case "/":
+                navigate(`/movies/${props.listData.type}/${id}`);
+                break;
+            case "/tv":
+                navigate(`/tv/${props.listData.type}/${id}`);
+        }
     };
     return (
         <SliderList>
@@ -123,7 +130,11 @@ function Slider(props: any) {
                                     onClick={() => onBoxClicked(movie.id)}
                                 >
                                     <Info variants={infoVariants}>
-                                        <h4>{movie.title}</h4>
+                                        <h4>
+                                            {movie.title
+                                                ? movie.title
+                                                : movie.name}
+                                        </h4>
                                     </Info>
                                 </Box>
                             ))}
