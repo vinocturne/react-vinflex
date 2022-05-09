@@ -9,6 +9,11 @@ interface IMovie {
     overview: string;
 }
 
+interface IGenres {
+    id: number;
+    name: string;
+}
+
 export interface IMoviesResult {
     dates: {
         maximum: string;
@@ -33,6 +38,19 @@ export interface IPopularResult {
     total_results: number;
 }
 
+export interface IMovieDetail {
+    adult: boolean;
+    backdrop_path: string;
+    budget: number;
+    genres: IGenres[];
+    id: number;
+    title: string;
+    release_date: string;
+    overview: string;
+    runtime: number;
+    vote_average: number;
+}
+
 export function getMovies() {
     return fetch(
         `${BASE_PATH}/movie/now_playing?api_key=${API_KEY}`
@@ -48,5 +66,12 @@ export function searchMovies(keyword: string) {
 export function getPopularMovies() {
     return fetch(
         `${BASE_PATH}/movie/popular?api_key=${API_KEY}`
+    ).then((response) => response.json());
+}
+
+export function getMovieDetail({ queryKey }: any) {
+    const [_, movieId] = queryKey;
+    return fetch(
+        `${BASE_PATH}/movie/${movieId}?api_key=${API_KEY}`
     ).then((response) => response.json());
 }

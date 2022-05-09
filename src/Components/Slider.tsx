@@ -1,10 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
-import { AnimatePresence, motion, useViewportScroll } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { makeImagePath } from "../utils";
-import { IMoviesResult } from "../api";
 import { useNavigate } from "react-router-dom";
-import { useRecoilValue } from "recoil";
 import { listData } from "../atoms";
 
 const SliderList = styled.div`
@@ -86,18 +84,15 @@ const Info = styled(motion.div)`
 
 const offset = 6;
 
-function Slider({ listData }: any) {
-    // function Slider(listData: IMoviesResult) {
+function Slider(props: any) {
     const [index, setIndex] = useState(0);
     const [leaving, setLeaving] = useState(false);
     const toggleLeaving = () => setLeaving((prev) => !prev);
     const navigate = useNavigate();
     const onBoxClicked = (movieId: number) => {
-        console.log(movieId + listData.type);
-        navigate(`/movies/${listData.type}/${movieId}`);
+        props.clickedMovie();
+        navigate(`/movies/${props.listData.type}/${movieId}`);
     };
-    // console.log(listData);
-    // const movieData = useRecoilValue(listData);
     return (
         <SliderList>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
@@ -109,28 +104,29 @@ function Slider({ listData }: any) {
                     transition={{ type: "tween", duration: 1 }}
                     key={index}
                 >
-                    {listData?.results
-                        .slice(1)
-                        .slice(offset * index, offset * index + offset)
-                        .map((movie: any) => (
-                            <Box
-                                layoutId={movie.id + listData.type}
-                                variants={boxVariants}
-                                key={movie.id}
-                                initial="normal"
-                                whileHover="hover"
-                                transition={{ type: "tween" }}
-                                bgphoto={makeImagePath(
-                                    movie.backdrop_path,
-                                    "w500"
-                                )}
-                                onClick={() => onBoxClicked(movie.id)}
-                            >
-                                <Info variants={infoVariants}>
-                                    <h4>{movie.title}</h4>
-                                </Info>
-                            </Box>
-                        ))}
+                    {listData &&
+                        props.listData?.results
+                            .slice(1)
+                            .slice(offset * index, offset * index + offset)
+                            .map((movie: any) => (
+                                <Box
+                                    layoutId={movie.id + props.listData.type}
+                                    variants={boxVariants}
+                                    key={movie.id}
+                                    initial="normal"
+                                    whileHover="hover"
+                                    transition={{ type: "tween" }}
+                                    bgphoto={makeImagePath(
+                                        movie.backdrop_path,
+                                        "w500"
+                                    )}
+                                    onClick={() => onBoxClicked(movie.id)}
+                                >
+                                    <Info variants={infoVariants}>
+                                        <h4>{movie.title}</h4>
+                                    </Info>
+                                </Box>
+                            ))}
                 </Row>
             </AnimatePresence>
         </SliderList>
