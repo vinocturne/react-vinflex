@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "styled-components";
 import { useQuery } from "react-query";
 import { useLocation } from "react-router-dom";
@@ -6,7 +5,10 @@ import { IMoviesResult, ITvResult, searchMovies, searchTvs } from "../api";
 import { makeImagePath } from "../utils";
 import { motion } from "framer-motion";
 
-const SearchContainer = styled.div``;
+const SearchContainer = styled.div`
+    position: relative;
+    top: 100px;
+`;
 const infoVariants = {
     hover: {
         opacity: 1,
@@ -17,7 +19,7 @@ const SearchList = styled.div`
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     gap: 10px;
-    position: absolute;
+    /* position: absolute; */
     top: 100px;
 `;
 const Box = styled(motion.div)<{ bgphoto: string }>`
@@ -29,11 +31,11 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
     position: relative;
     font-size: 24px;
     cursor: pointer;
-    &:first-child {
-        transform-origin: center left;
-    }
-    &:last-child {
+    &:nth-child(6n) {
         transform-origin: center right;
+    }
+    &:nth-child(6n + 1) {
+        transform-origin: center left;
     }
 `;
 
@@ -50,6 +52,26 @@ const Info = styled(motion.div)`
     }
 `;
 
+const boxVariants = {
+    normal: {
+        scale: 1,
+    },
+    hover: {
+        zIndex: 9999,
+        scale: 1.3,
+        y: -50,
+        transition: {
+            delay: 0.5,
+            duration: 0.3,
+        },
+    },
+};
+
+const MovieListTitle = styled.div`
+    font-size: 32px;
+    padding: 30px;
+`;
+
 function Search() {
     const location = useLocation();
     const keyword = new URLSearchParams(location.search).get("keyword");
@@ -60,14 +82,15 @@ function Search() {
         ["tvs", "search"],
         () => searchTvs(keyword as any)
     );
-    console.log(tvList);
+
     return (
         <SearchContainer>
+            <MovieListTitle>Searched Movie by '{keyword}'</MovieListTitle>
             <SearchList>
                 {movieList?.results.map((movie) => (
                     <Box
                         // layoutId={movie.id + props.listData.type}
-                        // variants={boxVariants}
+                        variants={boxVariants}
                         key={movie.id}
                         initial="normal"
                         whileHover="hover"
@@ -80,22 +103,25 @@ function Search() {
                         </Info>
                     </Box>
                 ))}
-                {/* {movieList?.results.map((movie) => (
+            </SearchList>
+            <MovieListTitle>Searched TV Series by '{keyword}'</MovieListTitle>
+            <SearchList>
+                {tvList?.results.map((tv) => (
                     <Box
                         // layoutId={movie.id + props.listData.type}
-                        // variants={boxVariants}
-                        key={movie.id}
+                        variants={boxVariants}
+                        key={tv.id}
                         initial="normal"
                         whileHover="hover"
                         transition={{ type: "tween" }}
-                        bgphoto={makeImagePath(movie.backdrop_path, "w500")}
-                        // onClick={() => onBoxClicked(movie.id)}
+                        bgphoto={makeImagePath(tv.backdrop_path, "w500")}
+                        // onClick={() => onBoxClicked(tv.id)}
                     >
                         <Info variants={infoVariants}>
-                            <h4>{movie.title}</h4>
+                            <h4>{tv.name}</h4>
                         </Info>
                     </Box>
-                ))} */}
+                ))}
             </SearchList>
         </SearchContainer>
     );

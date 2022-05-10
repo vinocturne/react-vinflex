@@ -1,14 +1,14 @@
 const BASE_PATH = "https://api.themoviedb.org/3";
 const API_KEY = process.env.REACT_APP_MOVIE_DB_KEY;
 
-interface IMovie {
+export interface IMovie {
     id: number;
     backdrop_path: string;
     poster_path: string;
     title: string;
     overview: string;
 }
-interface ITv {
+export interface ITv {
     id: number;
     backdrop_path: string;
     poster_path: string;
