@@ -1,9 +1,25 @@
 import styled from "styled-components";
 import { useQuery } from "react-query";
-import { useLocation } from "react-router-dom";
-import { IMoviesResult, ITvResult, searchMovies, searchTvs } from "../api";
+import {
+    Navigate,
+    useLocation,
+    useNavigate,
+    useParams,
+} from "react-router-dom";
+import {
+    getMovieDetail,
+    getTvDetail,
+    IMovieDetail,
+    IMoviesResult,
+    ITvDetail,
+    ITvResult,
+    searchMovies,
+    searchTvs,
+} from "../api";
 import { makeImagePath } from "../utils";
 import { motion } from "framer-motion";
+import Detail from "../Components/Detail";
+import { useState } from "react";
 
 const SearchContainer = styled.div`
     position: relative;
@@ -74,6 +90,8 @@ const MovieListTitle = styled.div`
 
 function Search() {
     const location = useLocation();
+    const navigate = useNavigate();
+
     const keyword = new URLSearchParams(location.search).get("keyword");
     const { data: movieList, isLoading: movieLoading } = useQuery<
         IMoviesResult
@@ -82,6 +100,22 @@ function Search() {
         ["tvs", "search"],
         () => searchTvs(keyword as any)
     );
+    const { data: movieDetail, refetch: movieDetailRefetch } = useQuery<
+        IMovieDetail
+    >(["detail", "movieDetail"], getMovieDetail, { enabled: false });
+    const { data: tvDetail, refetch: tvDetailRefetch } = useQuery<ITvDetail>(
+        ["detail", "tvDetail"],
+        getTvDetail,
+        { enabled: false }
+    );
+    const clickedMovie = async (id: number) => {
+        movieDetailRefetch();
+        await navigate(`/search/${id}`);
+    };
+    const clickedTv = async (id: number) => {
+        tvDetailRefetch();
+        await navigate(`/search/${id}`);
+    };
 
     return (
         <SearchContainer>
@@ -96,7 +130,7 @@ function Search() {
                         whileHover="hover"
                         transition={{ type: "tween" }}
                         bgphoto={makeImagePath(movie.backdrop_path, "w500")}
-                        // onClick={() => onBoxClicked(movie.id)}
+                        onClick={() => clickedMovie(movie.id)}
                     >
                         <Info variants={infoVariants}>
                             <h4>{movie.title}</h4>
@@ -104,6 +138,7 @@ function Search() {
                     </Box>
                 ))}
             </SearchList>
+            <Detail detail={{ ...movieDetail, type: "movies" }}></Detail>
             <MovieListTitle>Searched TV Series by '{keyword}'</MovieListTitle>
             <SearchList>
                 {tvList?.results.map((tv) => (
@@ -115,7 +150,7 @@ function Search() {
                         whileHover="hover"
                         transition={{ type: "tween" }}
                         bgphoto={makeImagePath(tv.backdrop_path, "w500")}
-                        // onClick={() => onBoxClicked(tv.id)}
+                        onClick={() => clickedTv(tv.id)}
                     >
                         <Info variants={infoVariants}>
                             <h4>{tv.name}</h4>
@@ -123,6 +158,7 @@ function Search() {
                     </Box>
                 ))}
             </SearchList>
+            <Detail detail={{ ...tvDetail, type: "tv" }}></Detail>
         </SearchContainer>
     );
 }

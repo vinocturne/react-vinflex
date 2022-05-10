@@ -1,4 +1,3 @@
-import { AnimatePresence, motion, useViewportScroll } from "framer-motion";
 import { useQuery } from "react-query";
 import styled from "styled-components";
 import {
@@ -9,8 +8,9 @@ import {
     ITvResult,
 } from "../api";
 import { makeImagePath } from "../utils";
-import { useMatch, useNavigate } from "react-router-dom";
+import { useLocation, useMatch } from "react-router-dom";
 import Slider from "../Components/Slider";
+import Detail from "../Components/Detail";
 
 const Wrapper = styled.div`
     background-color: black;
@@ -43,49 +43,6 @@ const Overview = styled.p`
     font-size: 28px;
     width: 50%;
 `;
-
-const Overlay = styled(motion.div)`
-    position: fixed;
-    top: 0;
-    width: 100%;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    opacity: 0;
-`;
-
-const BigTv = styled(motion.div)`
-    position: absolute;
-    width: 40vw;
-    height: 80vh;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    background-color: ${(props) => props.theme.black.lighter};
-    border-radius: 15px;
-    overflow: hidden;
-`;
-
-const BigCover = styled.div`
-    width: 100%;
-    background-size: cover;
-    background-position: center center;
-    height: 400px;
-`;
-
-const BigTitle = styled.h3`
-    color: ${(props) => props.theme.white.lighter};
-    padding: 20px;
-    font-size: 40px;
-    position: relative;
-    top: -75px;
-`;
-
-const BigOverview = styled.p`
-    position: relative;
-    padding: 20px;
-    top: -75px;
-    color: ${(props) => props.theme.white.lighter};
-`;
 const TvListContainer = styled.div`
     position: relative;
     display: grid;
@@ -111,10 +68,8 @@ const SlideTitle = styled.div`
 `;
 
 function Tv() {
-    const navigate = useNavigate();
+    const location = useLocation();
     const bigTvMatch = useMatch("/tv/:type/:id");
-
-    const { scrollY } = useViewportScroll();
     const { data: nowPlaying, isLoading: isNowPlayingLoading } = useQuery<
         ITvResult
     >(["tvs", "onTheAir"], getTvs);
@@ -122,10 +77,6 @@ function Tv() {
         ["tvs", "popular"],
         getPopularTvs
     );
-    const onOverlayClick = () => {
-        navigate("/tv");
-    };
-
     const {
         data: tvDetail,
         isLoading: isDetailLoading,
@@ -139,12 +90,6 @@ function Tv() {
         detailRefetch();
     };
 
-    const checkLayoutId = () => {
-        const id = bigTvMatch?.params.id;
-        const type = bigTvMatch?.params.type;
-        const layoutId = String(id) + String(type);
-        return layoutId;
-    };
     return (
         <Wrapper>
             {isNowPlayingLoading ? (
@@ -183,40 +128,12 @@ function Tv() {
                         ) : null}
                     </TvListContainer>
                     {!isDetailLoading ? (
-                        <AnimatePresence>
-                            {bigTvMatch ? (
-                                <>
-                                    <Overlay
-                                        onClick={onOverlayClick}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                    ></Overlay>
-                                    <BigTv
-                                        layoutId={checkLayoutId()}
-                                        style={{ top: scrollY.get() + 100 }}
-                                    >
-                                        {tvDetail && (
-                                            <>
-                                                <BigCover
-                                                    style={{
-                                                        backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
-                                                            tvDetail.backdrop_path,
-                                                            "w500"
-                                                        )})`,
-                                                    }}
-                                                />
-                                                <BigTitle>
-                                                    {tvDetail.name}
-                                                </BigTitle>
-                                                <BigOverview>
-                                                    {tvDetail.overview}
-                                                </BigOverview>
-                                            </>
-                                        )}
-                                    </BigTv>
-                                </>
-                            ) : null}
-                        </AnimatePresence>
+                        <Detail
+                            detail={{
+                                ...tvDetail,
+                                videoType: location.pathname.split("/")[1],
+                            }}
+                        ></Detail>
                     ) : null}
                 </>
             )}
