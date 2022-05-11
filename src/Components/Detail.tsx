@@ -12,9 +12,14 @@ const Overlay = styled(motion.div)`
 `;
 
 const BigMovie = styled(motion.div)`
-    position: absolute;
+    z-index: 999999;
+    position: fixed;
     width: 40vw;
     height: 80vh;
+    /* left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%); */
+    top: 100px;
     left: 0;
     right: 0;
     margin: 0 auto;
@@ -56,7 +61,7 @@ function Detail({ detail }: any) {
         const layoutId = String(id) + String(type);
         return layoutId;
     };
-    console.log(detail);
+    console.log(checkLayoutId());
     return (
         <AnimatePresence>
             {id ? (
@@ -68,7 +73,8 @@ function Detail({ detail }: any) {
                     ></Overlay>
                     <BigMovie
                         layoutId={checkLayoutId()}
-                        style={{ top: scrollY.get() + 100 }}
+                        // style={{ top: scrollY.get() + 100 }}
+                        exit={{ zIndex: 999999 }}
                     >
                         {detail && (
                             <>

@@ -74,7 +74,7 @@ const boxVariants = {
         scale: 1,
     },
     hover: {
-        zIndex: 9999,
+        zIndex: 999,
         scale: 1.3,
         y: -50,
         transition: {
@@ -142,11 +142,13 @@ function Search() {
                     </Box>
                 ))}
             </SearchList>
-            {movieMatch && (
-                <Detail
-                    detail={{ ...movieDetail, videoType: "movies" }}
-                ></Detail>
-            )}
+            <Detail
+                detail={
+                    movieMatch
+                        ? { ...movieDetail, videoType: "movies" }
+                        : { ...tvDetail, videoType: "tv" }
+                }
+            ></Detail>
             <MovieListTitle>Searched TV Series by '{keyword}'</MovieListTitle>
             <SearchList>
                 {tvList?.results.map((tv) => (
@@ -166,9 +168,6 @@ function Search() {
                     </Box>
                 ))}
             </SearchList>
-            {tvMatch && (
-                <Detail detail={{ ...tvDetail, videoType: "tv" }}></Detail>
-            )}
         </SearchContainer>
     );
 }
