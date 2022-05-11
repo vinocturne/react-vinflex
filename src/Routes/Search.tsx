@@ -3,6 +3,7 @@ import { useQuery } from "react-query";
 import {
     Navigate,
     useLocation,
+    useMatch,
     useNavigate,
     useParams,
 } from "react-router-dom";
@@ -91,7 +92,8 @@ const MovieListTitle = styled.div`
 function Search() {
     const location = useLocation();
     const navigate = useNavigate();
-
+    const movieMatch = useMatch("/search/movie/:id");
+    const tvMatch = useMatch("/search/tv/:id");
     const keyword = new URLSearchParams(location.search).get("keyword");
     const { data: movieList, isLoading: movieLoading } = useQuery<
         IMoviesResult
@@ -102,19 +104,21 @@ function Search() {
     );
     const { data: movieDetail, refetch: movieDetailRefetch } = useQuery<
         IMovieDetail
-    >(["detail", "movieDetail"], getMovieDetail, { enabled: false });
+    >(["detail", movieMatch && movieMatch?.params.id], getMovieDetail, {
+        enabled: false,
+    });
     const { data: tvDetail, refetch: tvDetailRefetch } = useQuery<ITvDetail>(
-        ["detail", "tvDetail"],
+        ["detail", tvMatch && tvMatch.params.id],
         getTvDetail,
         { enabled: false }
     );
     const clickedMovie = async (id: number) => {
+        await navigate(`/search/movie/${id}`);
         movieDetailRefetch();
-        await navigate(`/search/${id}`);
     };
     const clickedTv = async (id: number) => {
+        await navigate(`/search/tv/${id}`);
         tvDetailRefetch();
-        await navigate(`/search/${id}`);
     };
 
     return (
@@ -123,7 +127,7 @@ function Search() {
             <SearchList>
                 {movieList?.results.map((movie) => (
                     <Box
-                        // layoutId={movie.id + props.listData.type}
+                        layoutId={movie.id + "movie"}
                         variants={boxVariants}
                         key={movie.id}
                         initial="normal"
@@ -138,12 +142,16 @@ function Search() {
                     </Box>
                 ))}
             </SearchList>
-            <Detail detail={{ ...movieDetail, type: "movies" }}></Detail>
+            {movieMatch && (
+                <Detail
+                    detail={{ ...movieDetail, videoType: "movies" }}
+                ></Detail>
+            )}
             <MovieListTitle>Searched TV Series by '{keyword}'</MovieListTitle>
             <SearchList>
                 {tvList?.results.map((tv) => (
                     <Box
-                        // layoutId={movie.id + props.listData.type}
+                        layoutId={tv.id + "tv"}
                         variants={boxVariants}
                         key={tv.id}
                         initial="normal"
@@ -158,7 +166,9 @@ function Search() {
                     </Box>
                 ))}
             </SearchList>
-            <Detail detail={{ ...tvDetail, type: "tv" }}></Detail>
+            {tvMatch && (
+                <Detail detail={{ ...tvDetail, videoType: "tv" }}></Detail>
+            )}
         </SearchContainer>
     );
 }

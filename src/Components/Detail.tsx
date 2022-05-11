@@ -56,6 +56,7 @@ function Detail({ detail }: any) {
         const layoutId = String(id) + String(type);
         return layoutId;
     };
+    console.log(detail);
     return (
         <AnimatePresence>
             {id ? (
