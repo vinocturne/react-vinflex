@@ -37,15 +37,15 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
 `;
 
 const rowVariants = {
-    hidden: {
-        x: window.outerWidth,
-    },
+    hidden: (back: boolean) => ({
+        x: back ? -window.outerWidth : window.outerWidth,
+    }),
     visible: {
         x: 0,
     },
-    exit: {
-        x: -window.outerWidth,
-    },
+    exit: (back: boolean) => ({
+        x: back ? window.outerWidth : -window.outerWidth,
+    }),
 };
 
 const boxVariants = {
@@ -82,10 +82,41 @@ const Info = styled(motion.div)`
     }
 `;
 
+const PrevButton = styled.div`
+    z-index: 99999;
+    position: absolute;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    background-color: rgba(0, 0, 0, 0.5);
+    font-size: 28px;
+    font-weight: 500;
+    cursor: pointer;
+`;
+
+const NextButton = styled.div`
+    cursor: pointer;
+    z-index: 99999;
+    position: absolute;
+    right: 0;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    background-color: rgba(0, 0, 0, 0.5);
+    font-size: 28px;
+    font-weight: 500;
+`;
+
 const offset = 6;
 
 function Slider(props: any) {
+    const [key, setKey] = useState(0);
     const [index, setIndex] = useState(0);
+    const [back, setBack] = useState(false);
     const [leaving, setLeaving] = useState(false);
     const toggleLeaving = () => setLeaving((prev) => !prev);
     const navigate = useNavigate();
@@ -100,11 +131,38 @@ function Slider(props: any) {
         }
         props.clicked();
     };
+    const increaseIndex = () => {
+        setBack(false);
+        if (props.listData) {
+            if (leaving) return;
+            toggleLeaving();
+            const totalMovies = props.listData?.results.length - 1;
+            const maxIndex = Math.floor(totalMovies / offset) - 1;
+            setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+        }
+    };
+    const decreaseIndex = () => {
+        setBack(true);
+        if (props.listData) {
+            if (leaving) return;
+            toggleLeaving();
+            const totalMovies = props.listData?.results.length - 1;
+            const maxIndex = Math.floor(totalMovies / offset) - 1;
+            setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
+        }
+        console.log(index);
+    };
     return (
         <SliderList>
-            <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+            <AnimatePresence
+                initial={false}
+                custom={back}
+                onExitComplete={toggleLeaving}
+            >
+                <PrevButton onClick={decreaseIndex}> &lt; </PrevButton>
                 <Row
                     variants={rowVariants}
+                    custom={back}
                     initial="hidden"
                     animate="visible"
                     exit="exit"
@@ -139,6 +197,7 @@ function Slider(props: any) {
                                 </Box>
                             ))}
                 </Row>
+                <NextButton onClick={increaseIndex}>&gt;</NextButton>
             </AnimatePresence>
         </SliderList>
     );
