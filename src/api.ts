@@ -5,18 +5,26 @@ export interface IMovie {
     id: number;
     backdrop_path: string;
     poster_path: string;
+    genres: IGenres[];
     title: string;
+    release_date: string;
+    runtime: number;
+    vote_average: number;
     overview: string;
 }
 export interface ITv {
     id: number;
     backdrop_path: string;
     poster_path: string;
+    genres: IGenres[];
     name: string;
+    release_date: string;
+    runtime: number;
+    vote_average: number;
     overview: string;
 }
 
-interface IGenres {
+export interface IGenres {
     id: number;
     name: string;
 }
