@@ -1,11 +1,11 @@
 {
   "files": {
-    "main.js": "/react-vinflix/static/js/main.7b1d7144.js",
+    "main.js": "/react-vinflix/static/js/main.cc48be53.js",
     "static/media/star-full.png": "/react-vinflix/static/media/star-full.63575001b2e81adc3c1b.png",
     "index.html": "/react-vinflix/index.html",
-    "main.7b1d7144.js.map": "/react-vinflix/static/js/main.7b1d7144.js.map"
+    "main.cc48be53.js.map": "/react-vinflix/static/js/main.cc48be53.js.map"
   },
   "entrypoints": [
-    "static/js/main.7b1d7144.js"
+    "static/js/main.cc48be53.js"
   ]
 }
