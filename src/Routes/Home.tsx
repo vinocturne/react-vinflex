@@ -12,6 +12,7 @@ import { makeImagePath } from "../utils";
 import { useLocation, useMatch } from "react-router-dom";
 import Slider from "../Components/Slider";
 import Detail from "../Components/Detail";
+import { useTranslation } from "react-i18next";
 
 const Wrapper = styled.div`
     background-color: black;
@@ -70,6 +71,7 @@ const SlideTitle = styled.div`
 `;
 
 function Home() {
+    const { t } = useTranslation();
     const location = useLocation();
     const bigMovieMatch = useMatch("/movies/:type/:id");
     const { scrollY } = useViewportScroll();
@@ -88,6 +90,10 @@ function Home() {
         getMovieDetail,
         { enabled: false }
     );
+
+    // const changeLanguage = (lng) => {
+    //     i18n.changeLanguage(lng);
+    // };
 
     const clickedMovie = () => {
         detailRefetch();
@@ -110,7 +116,7 @@ function Home() {
                     <MovieListContainer>
                         {!isNowPlayingLoading ? (
                             <NowPlayingContainer>
-                                <SlideTitle>Now Playing</SlideTitle>
+                                <SlideTitle>{t("home_nowplaying")}</SlideTitle>
                                 <Slider
                                     listData={{
                                         ...nowPlaying,
@@ -122,7 +128,7 @@ function Home() {
                         ) : null}
                         {!isPopularLoading ? (
                             <PopularPlayingContainer>
-                                <SlideTitle>Popular</SlideTitle>
+                                <SlideTitle>{t("home_popular")}</SlideTitle>
                                 <Slider
                                     listData={{ ...popular, type: "popular" }}
                                     clicked={clickedMovie}

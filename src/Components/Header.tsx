@@ -4,10 +4,12 @@ import {
     useAnimation,
     useViewportScroll,
 } from "framer-motion";
+import { changeLanguage, t } from "i18next";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 
 const Nav = styled(motion.nav)`
     z-index: 999999;
@@ -114,11 +116,19 @@ const logoVariants = {
     },
 };
 
+const SelectLanguage = styled.div`
+    margin-right: 30px;
+    select {
+        height: 40px;
+    }
+`;
+
 interface IForm {
     keyword: string;
 }
 
 function Header() {
+    const { i18n, t } = useTranslation();
     const [searchOpen, setSearchOpen] = useState(false);
     const { register, handleSubmit } = useForm<IForm>();
     const homeMatch = useMatch("/");
@@ -154,15 +164,15 @@ function Header() {
                 navAnimation.start("scroll");
             } else {
                 navAnimation.start("top");
-                // navAnimation.start({
-                //     backgroundColor: "rgb(0, 0, 0,0)",
-                // });
             }
         });
     }, [scrollY, navAnimation]);
     const navigate = useNavigate();
     const onValid = (data: IForm) => {
         navigate(`/search?keyword=${data.keyword}`);
+    };
+    const changeLanguage = (lng: React.ChangeEvent<HTMLSelectElement>) => {
+        i18n.changeLanguage(lng.target.value);
     };
     return (
         <Nav variants={navVariants} animate={navAnimation} initial="top">
@@ -182,12 +192,13 @@ function Header() {
                     <Items>
                         <Item>
                             <Link to="/">
-                                Home {homeMatch && <Circle layoutId="circle" />}
+                                {t("header_home")}
+                                {homeMatch && <Circle layoutId="circle" />}
                             </Link>
                         </Item>
                         <Item>
                             <Link to="/tv">
-                                Tv Shows{" "}
+                                {t("header_tv")}
                                 {tvMatch && <Circle layoutId="circle" />}
                             </Link>
                         </Item>
@@ -220,6 +231,12 @@ function Header() {
                         placeholder="Search for movie or tv show..."
                     />
                 </Search>
+                <SelectLanguage>
+                    <select onChange={(lng: any) => changeLanguage(lng)}>
+                        <option value="ko">한국어</option>
+                        <option value="en">English</option>
+                    </select>
+                </SelectLanguage>
             </Col>
         </Nav>
     );

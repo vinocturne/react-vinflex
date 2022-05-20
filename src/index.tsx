@@ -5,6 +5,7 @@ import { createGlobalStyle, ThemeProvider } from "styled-components";
 import App from "./App";
 import { theme } from "./theme";
 import { QueryClient, QueryClientProvider } from "react-query";
+import "./i18n";
 
 const GlobalStyle = createGlobalStyle`
 html, body, div, span, applet, object, iframe,
