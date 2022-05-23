@@ -114,7 +114,6 @@ const NextButton = styled.div`
 const offset = 6;
 
 function Slider(props: any) {
-    const [key, setKey] = useState(0);
     const [index, setIndex] = useState(0);
     const [back, setBack] = useState(false);
     const [leaving, setLeaving] = useState(false);

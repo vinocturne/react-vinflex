@@ -4,7 +4,6 @@ import {
     useAnimation,
     useViewportScroll,
 } from "framer-motion";
-import { changeLanguage, t } from "i18next";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useMatch, useNavigate } from "react-router-dom";
@@ -192,13 +191,13 @@ function Header() {
                     <Items>
                         <Item>
                             <Link to="/">
-                                {t("header_home")}
+                                {t("header.home")}
                                 {homeMatch && <Circle layoutId="circle" />}
                             </Link>
                         </Item>
                         <Item>
                             <Link to="/tv">
-                                {t("header_tv")}
+                                {t("header.tv")}
                                 {tvMatch && <Circle layoutId="circle" />}
                             </Link>
                         </Item>

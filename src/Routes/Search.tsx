@@ -1,12 +1,6 @@
 import styled from "styled-components";
 import { useQuery } from "react-query";
-import {
-    Navigate,
-    useLocation,
-    useMatch,
-    useNavigate,
-    useParams,
-} from "react-router-dom";
+import { useLocation, useMatch, useNavigate } from "react-router-dom";
 import {
     getMovieDetail,
     getTvDetail,
@@ -20,7 +14,7 @@ import {
 import { makeImagePath } from "../utils";
 import { motion } from "framer-motion";
 import Detail from "../Components/Detail";
-import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const SearchContainer = styled.div`
     position: relative;
@@ -90,17 +84,18 @@ const MovieListTitle = styled.div`
 `;
 
 function Search() {
+    const { t } = useTranslation();
     const location = useLocation();
     const navigate = useNavigate();
     const movieMatch = useMatch("/search/movie/:id");
     const tvMatch = useMatch("/search/tv/:id");
     const keyword = new URLSearchParams(location.search).get("keyword");
-    const { data: movieList, isLoading: movieLoading } = useQuery<
-        IMoviesResult
-    >(["movies", "search"], () => searchMovies(keyword as any));
-    const { data: tvList, isLoading: tvLoading } = useQuery<ITvResult>(
-        ["tvs", "search"],
-        () => searchTvs(keyword as any)
+    const { data: movieList } = useQuery<IMoviesResult>(
+        ["movies", "search"],
+        () => searchMovies(keyword as any)
+    );
+    const { data: tvList } = useQuery<ITvResult>(["tvs", "search"], () =>
+        searchTvs(keyword as any)
     );
     const { data: movieDetail, refetch: movieDetailRefetch } = useQuery<
         IMovieDetail
@@ -123,7 +118,9 @@ function Search() {
 
     return (
         <SearchContainer>
-            <MovieListTitle>Searched Movie by '{keyword}'</MovieListTitle>
+            <MovieListTitle>
+                {t("search.movie")} '{keyword}'
+            </MovieListTitle>
             <SearchList>
                 {movieList?.results.map((movie) => (
                     <Box
@@ -149,7 +146,9 @@ function Search() {
                         : { ...tvDetail, videoType: "tv" }
                 }
             ></Detail>
-            <MovieListTitle>Searched TV Series by '{keyword}'</MovieListTitle>
+            <MovieListTitle>
+                {t("search.tv")} '{keyword}'
+            </MovieListTitle>
             <SearchList>
                 {tvList?.results.map((tv) => (
                     <Box

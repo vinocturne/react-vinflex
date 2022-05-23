@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { makeImagePath } from "../utils";
 import starFull from "../assets/images/star-full.png";
 import { IGenres } from "../api";
+import { useTranslation } from "react-i18next";
 const Overlay = styled(motion.div)`
     position: fixed;
     top: 0;
@@ -90,6 +91,7 @@ const InfoTitle = styled.span`
 `;
 
 function Detail({ detail }: any) {
+    const { t } = useTranslation();
     const { id, type } = useParams();
     const navigate = useNavigate();
     const onOverlayClick = () => {
@@ -136,7 +138,9 @@ function Detail({ detail }: any) {
                                 <InfoContainer>
                                     <Genres>
                                         {detail?.genres?.length != 0 ? (
-                                            <GenresTitle>Genres</GenresTitle>
+                                            <GenresTitle>
+                                                {t("detail.genres")}
+                                            </GenresTitle>
                                         ) : null}
                                         {detail?.genres?.map(
                                             (genre: IGenres) => (
@@ -146,14 +150,19 @@ function Detail({ detail }: any) {
                                     </Genres>
                                     {detail?.videoType === "movies" ? (
                                         <Info>
-                                            <InfoTitle>Info.</InfoTitle>
+                                            <InfoTitle>
+                                                {t("detail.info.title")}.
+                                            </InfoTitle>
                                             <div>
                                                 <div>
-                                                    Runtime : {detail?.runtime}
+                                                    {t("detail.info.runtime")} :{" "}
+                                                    {detail?.runtime}
                                                 </div>
                                                 <div>
-                                                    Release Date :
-                                                    {detail?.release_date}
+                                                    {t(
+                                                        "detail.info.release-date"
+                                                    )}{" "}
+                                                    :{detail?.release_date}
                                                 </div>
                                             </div>
                                         </Info>

@@ -1,6 +1,22 @@
 {
-    "header_home": "Home",
-    "header_tv": "Tv Shows",
-    "home_nowplaying": "Now Playing",
-    "home_popular": "Popular"
+    "header": {
+        "home": "HOME",
+        "tv": "TV Shows"
+    },
+    "home": {
+        "nowPlaying": "Now Playing",
+        "popular": "Popular"
+    },
+    "search": {
+        "movie": "Searched Movie by",
+        "tv": "Searched TV Series by"
+    },
+    "detail": {
+        "genres": "Genres",
+        "info": {
+            "title": "Info.",
+            "runtime": "Runtime",
+            "release-date": "Release Date"
+        }
+    }
 }

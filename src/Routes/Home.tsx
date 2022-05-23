@@ -1,4 +1,3 @@
-import { useViewportScroll } from "framer-motion";
 import { useQuery } from "react-query";
 import styled from "styled-components";
 import {
@@ -74,7 +73,6 @@ function Home() {
     const { t } = useTranslation();
     const location = useLocation();
     const bigMovieMatch = useMatch("/movies/:type/:id");
-    const { scrollY } = useViewportScroll();
     const { data: nowPlaying, isLoading: isNowPlayingLoading } = useQuery<
         IMoviesResult
     >(["movies", "nowPlaying"], getMovies);
@@ -116,7 +114,7 @@ function Home() {
                     <MovieListContainer>
                         {!isNowPlayingLoading ? (
                             <NowPlayingContainer>
-                                <SlideTitle>{t("home_nowplaying")}</SlideTitle>
+                                <SlideTitle>{t("home.nowPlaying")}</SlideTitle>
                                 <Slider
                                     listData={{
                                         ...nowPlaying,
@@ -128,7 +126,7 @@ function Home() {
                         ) : null}
                         {!isPopularLoading ? (
                             <PopularPlayingContainer>
-                                <SlideTitle>{t("home_popular")}</SlideTitle>
+                                <SlideTitle>{t("home.popular")}</SlideTitle>
                                 <Slider
                                     listData={{ ...popular, type: "popular" }}
                                     clicked={clickedMovie}
