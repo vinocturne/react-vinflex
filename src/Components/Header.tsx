@@ -191,13 +191,13 @@ function Header() {
                     <Items>
                         <Item>
                             <Link to="/">
-                                {t("header.home")}
+                                {t("header_home")}
                                 {homeMatch && <Circle layoutId="circle" />}
                             </Link>
                         </Item>
                         <Item>
                             <Link to="/tv">
-                                {t("header.tv")}
+                                {t("header_tv")}
                                 {tvMatch && <Circle layoutId="circle" />}
                             </Link>
                         </Item>

@@ -139,7 +139,7 @@ function Detail({ detail }: any) {
                                     <Genres>
                                         {detail?.genres?.length != 0 ? (
                                             <GenresTitle>
-                                                {t("detail.genres")}
+                                                {t("detail_genres")}
                                             </GenresTitle>
                                         ) : null}
                                         {detail?.genres?.map(
@@ -151,16 +151,16 @@ function Detail({ detail }: any) {
                                     {detail?.videoType === "movies" ? (
                                         <Info>
                                             <InfoTitle>
-                                                {t("detail.info.title")}.
+                                                {t("detail_info")}.
                                             </InfoTitle>
                                             <div>
                                                 <div>
-                                                    {t("detail.info.runtime")} :{" "}
+                                                    {t("detail_info_runtime")} :{" "}
                                                     {detail?.runtime}
                                                 </div>
                                                 <div>
                                                     {t(
-                                                        "detail.info.release-date"
+                                                        "detail_info_release-date"
                                                     )}{" "}
                                                     :{detail?.release_date}
                                                 </div>

@@ -30,7 +30,7 @@
         "web-vitals": "^2.1.4"
     },
     "scripts": {
-        "start": "react-scripts start",
+        "start": "concurrently \"gulp\" \"react-scripts start\"",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
@@ -57,6 +57,9 @@
     },
     "homepage": "https://vinocturne.github.io/react-vinflix",
     "devDependencies": {
-        "babel-plugin-transform-remove-console": "^6.9.4"
+        "babel-plugin-transform-remove-console": "^6.9.4",
+        "concurrently": "^7.2.1",
+        "gulp": "^4.0.2",
+        "gulp-csv-to-json": "^0.1.1"
     }
 }

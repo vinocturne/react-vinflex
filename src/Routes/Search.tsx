@@ -119,7 +119,7 @@ function Search() {
     return (
         <SearchContainer>
             <MovieListTitle>
-                {t("search.movie")} '{keyword}'
+                {t("search_movie")} '{keyword}'
             </MovieListTitle>
             <SearchList>
                 {movieList?.results.map((movie) => (
@@ -147,7 +147,7 @@ function Search() {
                 }
             ></Detail>
             <MovieListTitle>
-                {t("search.tv")} '{keyword}'
+                {t("search_tv")} '{keyword}'
             </MovieListTitle>
             <SearchList>
                 {tvList?.results.map((tv) => (

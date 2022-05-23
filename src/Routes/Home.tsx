@@ -114,7 +114,7 @@ function Home() {
                     <MovieListContainer>
                         {!isNowPlayingLoading ? (
                             <NowPlayingContainer>
-                                <SlideTitle>{t("home.nowPlaying")}</SlideTitle>
+                                <SlideTitle>{t("home_nowPlaying")}</SlideTitle>
                                 <Slider
                                     listData={{
                                         ...nowPlaying,
@@ -126,7 +126,7 @@ function Home() {
                         ) : null}
                         {!isPopularLoading ? (
                             <PopularPlayingContainer>
-                                <SlideTitle>{t("home.popular")}</SlideTitle>
+                                <SlideTitle>{t("home_popular")}</SlideTitle>
                                 <Slider
                                     listData={{ ...popular, type: "popular" }}
                                     clicked={clickedMovie}
