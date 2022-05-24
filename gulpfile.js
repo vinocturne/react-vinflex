@@ -12,7 +12,6 @@ function csvToJSON(csv) {
         }
         jsonArray.push(obj);
     }
-
     let ko = {};
     let en = {};
     header.map((e) => {
@@ -34,8 +33,10 @@ function csvToJSON(csv) {
     return jsonArray;
 }
 
-gulp.task("csvToJson", function () {
-    csvToJSON(fs.readFileSync("src/i18n/languageCsv.csv").toString());
+gulp.task("csvToJson", async function () {
+    return await csvToJSON(
+        fs.readFileSync("src/i18n/languageCsv.csv").toString()
+    );
 });
 
 gulp.task("watch", function () {
