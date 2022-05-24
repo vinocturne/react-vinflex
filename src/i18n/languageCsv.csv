@@ -1,11 +1,11 @@
-key,ko,en
-header_home,영화,Home
-header_tv,TV 시리즈,TV Series
-home_nowPlaying,현재 상영중인 영화,Now Playing
-home_popular,인기 영화,Popular
-search_movie,영화 검색 결과,Searched Movie by
-search_tv,TV 시리즈 검색 결과,Searched TV Series by
-detail_genres,장르,Genres
-detail_info,영화 정보,Info.
-detail_info_runtime,러닝타임,Runtime
-detail_info_release-date,개봉일,Release Date
+key,ko,en,jp
+header_home,영화,Home,ホーム
+header_tv,TV 시리즈,TV Series,TVシリーズ
+home_nowPlaying,현재 상영중인 영화,Now Playing,ムービー
+home_popular,인기 영화,Popular,人気映画
+search_movie,영화 검색 결과,Searched Movie by,映画検索結果
+search_tv,TV 시리즈 검색 결과,Searched TV Series by,TVシリーズ検索結果
+detail_genres,장르,Genres,ジャンル
+detail_info,영화 정보,Info.,映画情報
+detail_info_runtime,러닝타임,Runtime,ランニングタイム
+detail_info_release-date,개봉일,Release Date,封切り日

@@ -1,7 +1,8 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import en from "./locales/en";
-import ko from "./locales/ko";
+import en from "./locales/en/en.json";
+import ko from "./locales/ko/ko.json";
+import jp from "./locales/jp/jp.json";
 
 i18n.use(initReactI18next).init({
     resources: {
@@ -10,6 +11,9 @@ i18n.use(initReactI18next).init({
         },
         ko: {
             translation: ko,
+        },
+        jp: {
+            translation: jp,
         },
     },
     lng: "ko",

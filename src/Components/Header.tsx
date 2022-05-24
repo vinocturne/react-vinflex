@@ -234,6 +234,7 @@ function Header() {
                     <select onChange={(lng: any) => changeLanguage(lng)}>
                         <option value="ko">한국어</option>
                         <option value="en">English</option>
+                        <option value="jp">日本語</option>
                     </select>
                 </SelectLanguage>
             </Col>

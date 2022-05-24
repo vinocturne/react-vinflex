@@ -1,35 +1,38 @@
 var gulp = require("gulp");
 const fs = require("fs");
+
 function csvToJSON(csv) {
     const rows = csv.split("\n");
     const jsonArray = [];
     const header = rows[0].split(",");
-    for (let i = 1; i < rows.length; i++) {
+    let langArr = [];
+    rows.map((row, index) => {
+        if (index === 0) return null;
         let obj = {};
-        let row = rows[i].split(",");
-        for (let j = 0; j < header.length; j++) {
-            obj[header[j]] = row[j];
-        }
-        jsonArray.push(obj);
-    }
-    let ko = {};
-    let en = {};
-    header.map((e) => {
-        if (e === "key") return null;
-        jsonArray.map((data) => {
-            if (e === "ko") {
-                ko[`${data.key}`] = data[e];
-            } else if (e === "en") {
-                en[`${data.key}`] = data[e];
+        let rowData = rows[index].split(",");
+        header.map((col, index) => {
+            return (obj[header[index]] = rowData[index]);
+        });
+        return jsonArray.push(obj);
+    });
+    header.map((col) => {
+        if (col === "key") return null;
+        jsonArray.map((data, index) => {
+            if (index === 0) {
+                langArr[col] = {};
             }
+            langArr[col][`${data.key}`] = data[col];
             return null;
         });
+        if (!fs.existsSync(`src/i18n/locales/${col}`)) {
+            fs.mkdirSync(`src/i18n/locales/${col}`);
+        }
+        fs.writeFileSync(
+            `src/i18n/locales/${col}/${col}.json`,
+            JSON.stringify(langArr[col])
+        );
+        return null;
     });
-    const koJson = JSON.stringify(ko);
-    const enJson = JSON.stringify(en);
-
-    fs.writeFileSync(`src/i18n/locales/ko/page.json`, koJson);
-    fs.writeFileSync(`src/i18n/locales/en/page.json`, enJson);
     return jsonArray;
 }
 
