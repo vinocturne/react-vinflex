@@ -1,5 +1,21 @@
 var gulp = require("gulp");
 const fs = require("fs");
+const { GoogleSpreadsheet } = require("google-spreadsheet");
+
+async function loadCsv() {
+    const sheetId = process.env.REACT_APP_LANGUAGE_SHEET_ID;
+    const creds = require("./key.json");
+    const doc = new GoogleSpreadsheet(sheetId);
+    await doc.useServiceAccountAuth(creds);
+
+    await doc.loadInfo();
+    const sheet = doc.sheetsByIndex[0];
+    const rows = await sheet.getRows();
+    rows.map((row) => {
+        // console.log(row);
+    });
+    // console.log(doc);
+}
 
 function csvToJSON(csv) {
     const rows = csv.split("\n");
@@ -35,6 +51,9 @@ function csvToJSON(csv) {
     });
     return jsonArray;
 }
+gulp.task("loadCsv", async function () {
+    return await loadCsv();
+});
 
 gulp.task("csvToJson", async function () {
     return await csvToJSON(
@@ -46,4 +65,4 @@ gulp.task("watch", function () {
     return gulp.watch("src/i18n/languageCsv.csv", gulp.series("csvToJson"));
 });
 
-gulp.task("default", gulp.series(["csvToJson", "watch"]));
+gulp.task("default", gulp.series(["loadCsv", "csvToJson", "watch"]));
