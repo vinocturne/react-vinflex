@@ -11,6 +11,7 @@ import { makeImagePath } from "../utils";
 import { useLocation, useMatch } from "react-router-dom";
 import Slider from "../Components/Slider";
 import Detail from "../Components/Detail";
+import { useTranslation } from "react-i18next";
 
 const Wrapper = styled.div`
     background-color: black;
@@ -68,6 +69,7 @@ const SlideTitle = styled.div`
 `;
 
 function Tv() {
+    const { t } = useTranslation();
     const location = useLocation();
     const bigTvMatch = useMatch("/tv/:type/:id");
     const { data: nowPlaying, isLoading: isNowPlayingLoading } = useQuery<
@@ -107,7 +109,7 @@ function Tv() {
                     <TvListContainer>
                         {!isNowPlayingLoading ? (
                             <NowPlayingContainer>
-                                <SlideTitle>Now Playing</SlideTitle>
+                                <SlideTitle>{t("tv_nowPlaying")}</SlideTitle>
                                 <Slider
                                     listData={{
                                         ...nowPlaying,
@@ -119,7 +121,7 @@ function Tv() {
                         ) : null}
                         {!isPopularLoading ? (
                             <PopularPlayingContainer>
-                                <SlideTitle>Popular</SlideTitle>
+                                <SlideTitle>{t("tv_popular")}</SlideTitle>
                                 <Slider
                                     listData={{ ...popular, type: "popular" }}
                                     clicked={clickedTv}
