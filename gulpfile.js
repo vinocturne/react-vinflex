@@ -1,4 +1,5 @@
-var gulp = require("gulp");
+require("dotenv").config();
+const gulp = require("gulp");
 const fs = require("fs");
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 
@@ -7,18 +8,19 @@ async function loadCsv() {
     const creds = require("./key.json");
     const doc = new GoogleSpreadsheet(sheetId);
     await doc.useServiceAccountAuth(creds);
-
     await doc.loadInfo();
     const sheet = doc.sheetsByIndex[0];
     const rows = await sheet.getRows();
+    const data = [];
+    data.push(sheet.headerValues.join());
     rows.map((row) => {
-        // console.log(row);
+        return data.push(row._rawData.join());
     });
-    // console.log(doc);
+    return data;
 }
 
-function csvToJSON(csv) {
-    const rows = csv.split("\n");
+async function csvToJSON() {
+    const rows = await loadCsv();
     const jsonArray = [];
     const header = rows[0].split(",");
     let langArr = [];
@@ -56,13 +58,7 @@ gulp.task("loadCsv", async function () {
 });
 
 gulp.task("csvToJson", async function () {
-    return await csvToJSON(
-        fs.readFileSync("src/i18n/languageCsv.csv").toString()
-    );
+    return await csvToJSON();
 });
 
-gulp.task("watch", function () {
-    return gulp.watch("src/i18n/languageCsv.csv", gulp.series("csvToJson"));
-});
-
-gulp.task("default", gulp.series(["loadCsv", "csvToJson", "watch"]));
+gulp.task("default", gulp.series(["csvToJson"]));
