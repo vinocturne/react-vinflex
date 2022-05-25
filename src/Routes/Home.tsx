@@ -1,8 +1,17 @@
-import React from "react";
 import { useQuery } from "react-query";
 import styled from "styled-components";
-import { getMovies, IMoviesResult } from "../api";
+import {
+    getMovieDetail,
+    getMovies,
+    getPopularMovies,
+    IMovieDetail,
+    IMoviesResult,
+} from "../api";
 import { makeImagePath } from "../utils";
+import { useLocation, useMatch } from "react-router-dom";
+import Slider from "../Components/Slider";
+import Detail from "../Components/Detail";
+import { useTranslation } from "react-i18next";
 
 const Wrapper = styled.div`
     background-color: black;
@@ -36,26 +45,103 @@ const Overview = styled.p`
     width: 50%;
 `;
 
+const MovieListContainer = styled.div`
+    position: relative;
+    display: grid;
+    grid-template-rows: 350px 350px;
+`;
+const NowPlayingContainer = styled.div`
+    display: block;
+`;
+const PopularPlayingContainer = styled.div`
+    display: block;
+`;
+const SlideTitle = styled.div`
+    font-size: 32px;
+    position: relative;
+    bottom: 115px;
+    padding-left: 45px;
+    padding-right: 50px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background: linear-gradient(to right, black 70%, transparent);
+    width: fit-content;
+    color: ${(props) => props.theme.white.lighter};
+`;
+
 function Home() {
-    const { data, isLoading } = useQuery<IMoviesResult>(
-        ["movies", "nowPlaying"],
-        getMovies
+    const { t } = useTranslation();
+    const location = useLocation();
+    const bigMovieMatch = useMatch("/movies/:type/:id");
+    const { data: nowPlaying, isLoading: isNowPlayingLoading } = useQuery<
+        IMoviesResult
+    >(["movies", "nowPlaying"], getMovies);
+    const { data: popular, isLoading: isPopularLoading } = useQuery<
+        IMoviesResult
+    >(["movies", "popular"], getPopularMovies);
+    const {
+        data: movieDetail,
+        isLoading: isDetailLoading,
+        refetch: detailRefetch,
+    } = useQuery<IMovieDetail>(
+        ["detail", bigMovieMatch?.params.id && bigMovieMatch?.params.id],
+        getMovieDetail,
+        { enabled: false }
     );
-    console.log(data, isLoading);
+
+    // const changeLanguage = (lng) => {
+    //     i18n.changeLanguage(lng);
+    // };
+
+    const clickedMovie = () => {
+        detailRefetch();
+    };
+
     return (
         <Wrapper>
-            {isLoading ? (
+            {isNowPlayingLoading ? (
                 <Loader>Loading...</Loader>
             ) : (
                 <>
                     <Banner
                         bgPhoto={makeImagePath(
-                            data?.results[0].backdrop_path || ""
+                            nowPlaying?.results[0].backdrop_path || ""
                         )}
                     >
-                        <Title>{data?.results[0].title}</Title>
-                        <Overview>{data?.results[0].overview}</Overview>
+                        <Title>{nowPlaying?.results[0].title}</Title>
+                        <Overview>{nowPlaying?.results[0].overview}</Overview>
                     </Banner>
+                    <MovieListContainer>
+                        {!isNowPlayingLoading ? (
+                            <NowPlayingContainer>
+                                <SlideTitle>{t("home_nowPlaying")}</SlideTitle>
+                                <Slider
+                                    listData={{
+                                        ...nowPlaying,
+                                        type: "nowPlaying",
+                                    }}
+                                    clicked={clickedMovie}
+                                />
+                            </NowPlayingContainer>
+                        ) : null}
+                        {!isPopularLoading ? (
+                            <PopularPlayingContainer>
+                                <SlideTitle>{t("home_popular")}</SlideTitle>
+                                <Slider
+                                    listData={{ ...popular, type: "popular" }}
+                                    clicked={clickedMovie}
+                                />
+                            </PopularPlayingContainer>
+                        ) : null}
+                    </MovieListContainer>
+                    {!isDetailLoading ? (
+                        <Detail
+                            detail={{
+                                ...movieDetail,
+                                videoType: location.pathname.split("/")[1],
+                            }}
+                        ></Detail>
+                    ) : null}
                 </>
             )}
         </Wrapper>

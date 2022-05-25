@@ -1,0 +1,13 @@
+key,ko,en,jp
+header_home,영화,Home,ホーム
+header_tv,TV 시리즈,TV Series,TVシリーズ
+home_nowPlaying,현재 상영중인 영화,Now Playing,ムービー
+home_popular,인기 영화,Popular,人気映画
+tv_nowPlaying,현재 방영중인 TV시리즈,Now Playing,放送中のTVシリーズ
+tv_popular,인기 TV시리즈,Popular,人気テレビシリーズ
+search_movie,영화 검색 결과,Searched Movie by,映画検索結果
+search_tv,TV 시리즈 검색 결과,Searched TV Series by,TVシリーズ検索結果
+detail_genres,장르,Genres,ジャンル
+detail_info,영화 정보,Info.,映画情報
+detail_info_runtime,러닝타임,Runtime,ランニングタイム
+detail_info_release-date,개봉일,Release Date,封切り日

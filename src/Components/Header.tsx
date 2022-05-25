@@ -5,10 +5,13 @@ import {
     useViewportScroll,
 } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Link, useMatch } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { Link, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 
 const Nav = styled(motion.nav)`
+    z-index: 999999;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -43,7 +46,7 @@ const Logo = styled(motion.svg)`
     }
 `;
 
-const Search = styled.span`
+const Search = styled.form`
     color: white;
     display: flex;
     align-items: center;
@@ -112,8 +115,21 @@ const logoVariants = {
     },
 };
 
+const SelectLanguage = styled.div`
+    margin-right: 30px;
+    select {
+        height: 40px;
+    }
+`;
+
+interface IForm {
+    keyword: string;
+}
+
 function Header() {
+    const { i18n, t } = useTranslation();
     const [searchOpen, setSearchOpen] = useState(false);
+    const { register, handleSubmit } = useForm<IForm>();
     const homeMatch = useMatch("/");
     const tvMatch = useMatch("/tv");
     const inputAnimation = useAnimation();
@@ -143,16 +159,20 @@ function Header() {
     const navAnimation = useAnimation();
     useEffect(() => {
         scrollY.onChange(() => {
-            if (scrollY.get() > 80) {
+            if (scrollY.get() > 40) {
                 navAnimation.start("scroll");
             } else {
                 navAnimation.start("top");
-                // navAnimation.start({
-                //     backgroundColor: "rgb(0, 0, 0,0)",
-                // });
             }
         });
     }, [scrollY, navAnimation]);
+    const navigate = useNavigate();
+    const onValid = (data: IForm) => {
+        navigate(`/search?keyword=${data.keyword}`);
+    };
+    const changeLanguage = (lng: React.ChangeEvent<HTMLSelectElement>) => {
+        i18n.changeLanguage(lng.target.value);
+    };
     return (
         <Nav variants={navVariants} animate={navAnimation} initial="top">
             <Col>
@@ -171,12 +191,13 @@ function Header() {
                     <Items>
                         <Item>
                             <Link to="/">
-                                Home {homeMatch && <Circle layoutId="circle" />}
+                                {t("header_home")}
+                                {homeMatch && <Circle layoutId="circle" />}
                             </Link>
                         </Item>
                         <Item>
                             <Link to="/tv">
-                                Tv Shows{" "}
+                                {t("header_tv")}
                                 {tvMatch && <Circle layoutId="circle" />}
                             </Link>
                         </Item>
@@ -184,7 +205,7 @@ function Header() {
                 </AnimatePresence>
             </Col>
             <Col>
-                <Search>
+                <Search onSubmit={handleSubmit(onValid)}>
                     <motion.svg
                         animate={{ x: searchOpen ? -180 : 0 }}
                         onClick={openSearch}
@@ -199,12 +220,23 @@ function Header() {
                         ></path>
                     </motion.svg>
                     <Input
+                        {...register("keyword", {
+                            required: true,
+                            minLength: 2,
+                        })}
                         animate={inputAnimation}
                         initial={{ scaleX: 0 }}
                         transition={{ type: "linear" }}
                         placeholder="Search for movie or tv show..."
                     />
                 </Search>
+                <SelectLanguage>
+                    <select onChange={(lng: any) => changeLanguage(lng)}>
+                        <option value="ko">한국어</option>
+                        <option value="en">English</option>
+                        <option value="jp">日本語</option>
+                    </select>
+                </SelectLanguage>
             </Col>
         </Nav>
     );
